@@ -1,0 +1,789 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Visual SLAM</title>
+<style type="text/css">
+    body {}
+    li { list-style: none;  margin: 0; }
+    p { margin: 0; }
+    span.foldopened { color: white; font-size: xx-small;
+    border-width: 1; font-family: monospace; padding: 0em 0.25em 0em 0.25em; background: #e0e0e0;
+    VISIBILITY: visible;
+    cursor:pointer; }
+
+
+    span.foldclosed { color: #666666; font-size: xx-small;
+    border-width: 1; font-family: monospace; padding: 0em 0.25em 0em 0.25em; background: #e0e0e0;
+    VISIBILITY: hidden;
+    cursor:pointer; }
+
+    span.foldspecial { color: #666666; font-size: xx-small; border-style: none solid solid none;
+    border-color: #CCCCCC; border-width: 1; font-family: sans-serif; padding: 0em 0.1em 0em 0.1em; background: #e0e0e0;
+    cursor:pointer; }
+
+    span.l { color: red; font-weight: bold; }
+
+    a.mapnode:link {text-decoration: none; color: black; }
+    a.mapnode:visited {text-decoration: none; color: black; }
+    a.mapnode:active {text-decoration: none; color: black; }
+    a.mapnode:hover {text-decoration: none; color: black; background: #eeeee0; }
+
+</style>
+<!-- ^ Position is not set to relative / absolute here because of Mozilla -->
+</head>
+<body>
+
+<script type="text/javascript">
+   // Here we implement folding. It works fine with MSIE5.5, MSIE6.0 and
+   // Mozilla 0.9.6.
+
+   if (document.layers) {
+      //Netscape 4 specific code
+      pre = 'document.';
+      post = ''; }
+   if (document.getElementById) {
+      //Netscape 6 specific code
+      pre = 'document.getElementById("';
+      post = '").style'; }
+   if (document.all) {
+      //IE4+ specific code
+      pre = 'document.all.';
+      post = '.style'; }
+
+function layer_exists(layer) {
+   try {
+      eval(pre + layer + post);
+      return true; }
+   catch (error) {
+      return false; }}
+
+function show_layer(layer) {
+   eval(pre + layer + post).position = 'relative'; 
+   eval(pre + layer + post).visibility = 'visible'; }
+
+function hide_layer(layer) {
+   eval(pre + layer + post).visibility = 'hidden';
+   eval(pre + layer + post).position = 'absolute'; }
+
+function hide_folder(folder) {
+    hide_folding_layer(folder)
+    show_layer('show'+folder);
+
+    scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+}
+
+function show_folder(folder) {
+    // Precondition: all subfolders are folded
+
+    show_layer('hide'+folder);
+    hide_layer('show'+folder);
+    show_layer('fold'+folder);
+
+    scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+
+    var i;
+    for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       show_layer('show'+folder+'_'+i); }
+}
+function show_folder_completely(folder) {
+    // Precondition: all subfolders are folded
+
+    show_layer('hide'+folder);
+    hide_layer('show'+folder);
+    show_layer('fold'+folder);
+
+    scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+
+    var i;
+    for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       show_folder_completely(folder+'_'+i); }
+}
+
+
+
+function hide_folding_layer(folder) {
+   var i;
+   for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       hide_folding_layer(folder+'_'+i); }
+
+   hide_layer('hide'+folder);
+   hide_layer('show'+folder);
+   hide_layer('fold'+folder);
+
+   scrollBy(0,0); // This is a work around to make it work in Browsers (Explorer, Mozilla)
+}
+
+function fold_document() {
+   var i;
+   var folder = '1';
+   for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       hide_folder(folder+'_'+i); }
+}
+
+function unfold_document() {
+   var i;
+   var folder = '1';
+   for (i=1; layer_exists('fold'+folder+'_'+i); ++i) {
+       show_folder_completely(folder+'_'+i); }
+}
+
+</script>
+<SPAN class="foldspecial" onclick="fold_document()">All +</SPAN>
+<SPAN class="foldspecial" onclick="unfold_document()">All -</SPAN>
+<p>Visual SLAM</span>
+<ul><li><span id="show1_1" class="foldclosed" onClick="show_folder('1_1')" style="POSITION: absolute">+</span> <span id="hide1_1" class="foldopened" onClick="hide_folder('1_1')">-</span>
+importance</span>
+<ul id="fold1_1" style="POSITION: relative; VISIBILITY: visible;"><li><p>&#x6211;&#x4eec;&#x8bf4;,&#x5982;&#x679c;&#x628a;&#x5de5;&#x4f5c;&#x73af;&#x5883;&#x9650;&#x5b9a;&#x5728;&#x9759;&#x6001;&#x3001;&#x521a;&#x4f53;,&#x5149;&#x7167;&#x53d8;&#x5316;&#x4e0d;&#x660e;&#x663e;&#x3001;&#x6ca1;&#x6709;&#x4eba;&#x4e3a;&#x5e72;&#x6270;&#x7684;&#x573a;&#x666f;,&#x90a3;&#x4e48;,&#x8fd9;&#x4e2a; SLAM &#x7cfb;&#x7edf;&#x662f;&#x76f8;&#x5f53;&#x6210;&#x719f;&#x7684;&#x4e86;</span>
+<p>&#x4ec5;&#x901a;&#x8fc7;&#x89c6;&#x89c9;&#x91cc;&#x7a0b;&#x8ba1;&#x6765;&#x4f30;&#x8ba1;&#x8f68;&#x8ff9;,&#x5c06;&#x4e0d;&#x53ef;&#x907f;&#x514d;&#x5730;&#x51fa;&#x73b0;&#x7d2f;&#x8ba1;&#x6f02;&#x79fb;(Accumulating Drift)&#x3002; &#x8fd9;&#x662f;&#x7531;&#x4e8e;&#x89c6;&#x89c9;&#x91cc;&#x7a0b;&#x8ba1;(&#x5728;&#x6700;&#x7b80;&#x5355;&#x7684;&#x60c5;&#x51b5;&#x4e0b;)&#x53ea;&#x4f30;&#x8ba1;&#x4e24;&#x4e2a;&#x56fe;&#x50cf;&#x95f4;&#x8fd0;&#x52a8;&#x9020;&#x6210;&#x7684;&#x3002;&#x6211;&#x4eec;&#x77e5;&#x9053;,&#x6bcf; &#x6b21;&#x4f30;&#x8ba1;&#x90fd;&#x5e26;&#x6709;&#x4e00;&#x5b9a;&#x7684;&#x8bef;&#x5dee;,&#x800c;&#x7531;&#x4e8e;&#x91cc;&#x7a0b;&#x8ba1;&#x7684;&#x5de5;&#x4f5c;&#x65b9;&#x5f0f;,&#x5148;&#x524d;&#x65f6;&#x523b;&#x7684;&#x8bef;&#x5dee;&#x5c06;&#x4f1a;&#x4f20;&#x9012;&#x5230;&#x4e0b;&#x4e00; &#x65f6;&#x523b;,&#x5bfc;&#x81f4;&#x7ecf;&#x8fc7;&#x4e00;&#x6bb5;&#x65f6;&#x95f4;&#x4e4b;&#x540e;,&#x4f30;&#x8ba1;&#x7684;&#x8f68;&#x8ff9;&#x5c06;&#x4e0d;&#x518d;&#x51c6;&#x786e;</span>
+<p>&#x4e00;&#x822c;&#x6211;&#x4eec;&#x5bf9;&#x524d;&#x7aef;&#x7684;&#x901f;&#x5ea6;&#x6709;&#x8981;&#x6c42;&#xff0c;&#x6bd4;&#x5982;&#x6bcf;&#x79d2;30-60&#x5e27;&#xff0c;&#x4f46;&#x5bf9;&#x540e;&#x7aef;&#x901f;&#x5ea6;&#x8981;&#x6c42;&#x5c31;&#x4e0d;&#x662f;&#x7279;&#x522b;&#x5927;</span>
+</li>
+</ul>
+</li>
+<li><span id="show1_2" class="foldclosed" onClick="show_folder('1_2')" style="POSITION: absolute">+</span> <span id="hide1_2" class="foldopened" onClick="hide_folder('1_2')">-</span>
+Visual Odometry</span>
+<ul id="fold1_2" style="POSITION: relative; VISIBILITY: visible;"><li>Monocular SLAM</span>
+<ul><li>importance</span>
+<ul><li>&#x5e73;&#x79fb;&#x4e4b;&#x540e;&#x624d;&#x80fd;&#x8ba1;&#x7b97;&#x6df1;&#x5ea6;,&#x4ee5;&#x53ca;&#x65e0;&#x6cd5;&#x786e;&#x5b9a;&#x771f;&#x5b9e;&#x5c3a;&#x5ea6;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>Stereo SLAM</span>
+<ul><li><p>&#x53cc;&#x76ee;&#x6216;&#x591a;&#x76ee;&#x76f8;&#x673a;&#x7684;&#x7f3a;&#x70b9;&#x662f;&#x914d;&#x7f6e;&#x4e0e;&#x6807;&#x5b9a;&#x5747;&#x8f83;&#x4e3a;&#x590d;&#x6742;,&#x5176;&#x6df1;&#x5ea6;&#x91cf;&#x7a0b;&#x548c;&#x7cbe;&#x5ea6;&#x53d7;&#x53cc;&#x76ee; &#x7684;&#x57fa;&#x7ebf;&#x4e0e;&#x5206;&#x8fa8;&#x7387;&#x9650;&#x5236;,&#x800c;&#x4e14;&#x89c6;&#x5dee;&#x7684;&#x8ba1;&#x7b97;&#x975e;&#x5e38;&#x6d88;&#x8017;&#x8ba1;&#x7b97;&#x8d44;&#x6e90;,&#x9700;&#x8981;&#x4f7f;&#x7528; GPU &#x548c; FPGA &#x8bbe;&#x5907; &#x52a0;&#x901f;&#x540e;,&#x624d;&#x80fd;&#x5b9e;&#x65f6;&#x8f93;&#x51fa;&#x6574;&#x5f20;&#x56fe;&#x50cf;&#x7684;&#x8ddd;&#x79bb;&#x4fe1;&#x606f;&#x3002;&#x56e0;&#x6b64;&#x5728;&#x73b0;&#x6709;&#x7684;&#x6761;&#x4ef6;&#x4e0b;,&#x8ba1;&#x7b97;&#x91cf;&#x662f;&#x53cc;&#x76ee;&#x7684;&#x4e3b;&#x8981; &#x95ee;&#x9898;&#x4e4b;&#x4e00;&#x3002;</span>
+</li>
+</ul>
+</li>
+<li>RGBD SLAM</span>
+
+</li>
+<li>Method</span>
+<ul><li><span id="show1_2_1" class="foldclosed" onClick="show_folder('1_2_1')" style="POSITION: absolute">+</span> <span id="hide1_2_1" class="foldopened" onClick="hide_folder('1_2_1')">-</span>
+&#x76f4;&#x63a5;&#x6cd5;</span>
+<ul id="fold1_2_1" style="POSITION: relative; VISIBILITY: visible;"><li>importance</span>
+<ul><li>&#x7279;&#x5f81;&#x70b9;&#x63d0;&#x53d6;&#x5f88;&#x6162;&#xff0c;&#x662f;SLAM&#x7684;&#x4e3b;&#x8981;&#x8017;&#x65f6;</span>
+
+</li>
+<li>&#x7279;&#x5f81;&#x70b9;&#x4e22;&#x5931;&#x4e86;&#x5927;&#x91cf;&#x53ef;&#x80fd;&#x6709;&#x7528;&#x7684;&#x56fe;&#x50cf;&#x4fe1;&#x606f;</span>
+
+</li>
+<li>&#x5728;&#x4e00;&#x4e9b;&#x4f4e;&#x7eb9;&#x7406;&#x7684;&#x56fe;&#x50cf;&#x4e0a;&#x627e;&#x4e0d;&#x5230;&#x7279;&#x5f81;&#x70b9;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x5149;&#x6d41;&#x6cd5;
+    <p>
+      &#21482;&#35745;&#31639;&#20851;&#38190;&#28857;&#65292;&#19981;&#35745;&#31639;&#25551;&#35785;&#23376;&#65292;&#19982;&#29305;&#24449;&#28857;&#27861;&#27809;&#20160;&#20040;&#21306;&#21035;&#65292;&#21482;&#26159;&#25226;&#29305;&#24449;&#28857;&#25442;&#25104;&#20809;&#27969;
+    </p>
+  </span>
+<ul><li>&#x57fa;&#x672c;&#x5047;&#x8bbe;
+    <p>
+      &#28784;&#24230;&#19981;&#21464;&#20551;&#35774;&#65306;&#20687;&#32032;&#22312;&#21508;&#20010;&#22270;&#20687;&#20013;&#19981;&#21464;
+    </p>
+  </span>
+
+</li>
+<li>&#x7a00;&#x758f;</span>
+<ul><li>Lucas-Kanade&#x5149;&#x6d41;
+    <p>
+      &#20551;&#35774;&#26576;&#20010;&#31383;&#21475;&#20869;&#20687;&#32032;&#20855;&#26377;&#30456;&#21516;&#36816;&#21160;
+    </p>
+  </span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x7a20;&#x5bc6;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x76f4;&#x63a5;&#x6cd5;
+    <p>
+      &#21482;&#35745;&#31639;&#20851;&#38190;&#28857;&#25110;&#19981;&#35745;&#31639;&#20851;&#38190;&#28857;
+    </p>
+  </span>
+<ul><li>&#x63a8;&#x5bfc;
+    <p>
+      &#31532;&#19968;&#37096;&#20998;&#23548;&#25968;&#19982;&#26799;&#24230;&#30456;&#20851;
+    </p>
+  </span>
+
+</li>
+<li>&#x7a00;&#x758f;
+    <p>
+      &#21033;&#29992;&#31232;&#30095;&#20851;&#38190;&#28857;
+    </p>
+  </span>
+
+</li>
+<li>&#x534a;&#x7a20;&#x5bc6;
+    <p>
+      &#21033;&#29992;&#22270;&#20687;&#26799;&#24230;&#30340;&#28857;
+    </p>
+  </span>
+
+</li>
+<li>&#x7a20;&#x5bc6;
+    <p>
+      &#21033;&#29992;&#20840;&#22270;&#20687;
+    </p>
+  </span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x4f18;&#x7f3a;&#x70b9;</span>
+<ul><li>&#x4f18;&#x70b9;</span>
+<ul><li>&#x53ef;&#x4ee5;&#x7701;&#x53bb;&#x8ba1;&#x7b97;&#x7279;&#x5f81;&#x70b9;&#x7684;&#x65f6;&#x95f4;</span>
+
+</li>
+<li>&#x53ea;&#x8981;&#x6c42;&#x6709;&#x50cf;&#x7d20;&#x68af;&#x5ea6;&#x5373;&#x53ef;</span>
+
+</li>
+<li>&#x53ef;&#x4ee5;&#x6784;&#x5efa;&#x534a;&#x7a20;&#x5bc6;&#x751a;&#x81f3;&#x7a20;&#x5bc6;&#x5730;&#x56fe;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x7f3a;&#x70b9;</span>
+<ul><li>&#x975e;&#x51f8;&#x6027;&#xff0c;&#x53ea;&#x6709;&#x5728;&#x8fd0;&#x52a8;&#x5f88;&#x5c0f;&#x7684;&#x65f6;&#x5019;&#x76f4;&#x63a5;&#x6cd5;&#x624d;&#x80fd;&#x6210;&#x529f;</span>
+
+</li>
+<li>&#x5355;&#x4e2a;&#x50cf;&#x7d20;&#x6ca1;&#x6709;&#x533a;&#x5206;&#x5ea6;&#xff0c;&#x53ea;&#x80fd;&#x4ee5;&#x5c11;&#x6570;&#x670d;&#x4ece;&#x591a;&#x6570;&#xff0c;&#x6570;&#x91cf;&#x4ee3;&#x66ff;&#x8d28;&#x91cf;</span>
+
+</li>
+<li>&#x7070;&#x5ea6;&#x4e0d;&#x53d8;&#x5047;&#x8bbe;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x7279;&#x5f81;&#x70b9;&#x6cd5;</span>
+<ul><li>&#x6027;&#x8d28;</span>
+<ul><li>&#x53ef;&#x91cd;&#x590d;&#x6027;</span>
+
+</li>
+<li>&#x53ef;&#x533a;&#x522b;&#x6027;</span>
+
+</li>
+<li>&#x9ad8;&#x6548;&#x7387;
+    <p>
+      &#29305;&#24449;&#28857;&#30340;&#25968;&#37327;&#36828;&#23567;&#20110;&#20687;&#32032;&#25968;&#37327;
+    </p>
+  </span>
+
+</li>
+<li>&#x672c;&#x5730;&#x6027;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x7c7b;&#x522b;</span>
+<ul><li>SIFT</span>
+
+</li>
+<li>SURF</span>
+
+</li>
+<li>ORB</span>
+<ul><li>FAST &#x89d2;&#x70b9;</span>
+
+</li>
+<li>Orientation &#x8d28;&#x5fc3;-&#x4e2d;&#x5fc3;</span>
+
+</li>
+<li>BRIEF</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x7279;&#x5f81;&#x5339;&#x914d;</span>
+<ul><li>&#x66b4;&#x529b;&#x5339;&#x914d;</span>
+<ul><li>&#x6b27;&#x5f0f;&#x8ddd;&#x79bb;</span>
+
+</li>
+<li>&#x6c49;&#x660e;&#x8ddd;&#x79bb;
+    <p>
+      &#29992;&#20110;&#20108;&#36827;&#21046;&#65292;&#35745;&#31639;&#19981;&#21516;&#20301;&#25968;&#30340;&#20010;&#25968;
+    </p>
+  </span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x5feb;&#x901f;&#x6700;&#x8fd1;&#x90bb;</span>
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_2_2" class="foldclosed" onClick="show_folder('1_2_2')" style="POSITION: absolute">+</span> <span id="hide1_2_2" class="foldopened" onClick="hide_folder('1_2_2')">-</span>
+&#x6839;&#x636e;&#x5339;&#x914d;&#x70b9;&#x5bf9;&#x4f30;&#x8ba1;&#x76f8;&#x673a;&#x8fd0;&#x52a8;</span>
+<ul id="fold1_2_2" style="POSITION: relative; VISIBILITY: visible;"><li>&#x5229;&#x7528;RANSAC&#x8fdb;&#x884c;&#x9c81;&#x68d2;&#x6027;&#x5339;&#x914d;</span>
+
+</li>
+<li>&#x5355;&#x76ee;2D-2D</span>
+<ul><li>&#x5bf9;&#x6781;&#x51e0;&#x4f55;</span>
+<ul><li>&#x672c;&#x8d28;&#x77e9;&#x9635;E&#xff0c;&#x57fa;&#x672c;&#x77e9;&#x9635;F</span>
+<ul><li>&#x672c;&#x8d28;&#x77e9;&#x9635;&#x5185;&#x5728;&#x6027;&#x8d28;&#xff1a;&#x7279;&#x5f81;&#x503c;[a,a,0]&#xff0c;&#x7531;&#x4e8e;tR&#x6709;6&#x81ea;&#x7531;&#x5ea6;&#xff0c;&#x5176;&#x4e2d;&#x6709;&#x4e00;&#x4e2a;&#x5c3a;&#x5ea6;&#xff0c;&#x6240;&#x4ee5;&#x6709;5&#x4e2a;&#x81ea;&#x7531;&#x5ea6;&#xff0c;&#x7528;5&#x4e2a;&#x70b9;&#x5bf9;&#x5373;&#x53ef;&#x6c42;&#x89e3;&#xff0c;&#x4f46;&#x4e00;&#x822c;&#x7528;8&#x4e2a;&#x70b9;&#x5bf9;&#x8fdb;&#x884c;&#x6c42;&#x89e3;</span>
+
+</li>
+<li>&#x6c42;&#x89e3;&#x5f97;&#x5230;E&#x540e;&#x7528;SVD&#x5206;&#x89e3;&#xff0c;&#x4f1a;&#x5f97;&#x5230;4&#x7ec4;Rt&#x89e3;, &#x5176;&#x4e2d;UV&#x4e3a;&#x6b63;&#x4ea4;&#x77e9;&#x9635;</span>
+<ul><li>&#x7531;&#x4e8e;E&#x5177;&#x6709;&#x5185;&#x90e8;&#x6027;&#x8d28;&#x548c;&#x5c3a;&#x5ea6;</span>
+
+</li>
+<li>&#x53ea;&#x9700;&#x5e26;&#x5165;&#x4e00;&#x7ec4;&#x70b9;&#xff0c;&#x627e;&#x5230;&#x4ee4;&#x6df1;&#x5ea6;&#x4e3a;&#x6b63;&#x7684;&#x4e00;&#x7ec4;&#x89e3;&#x5373;&#x53ef;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x5355;&#x5e94;&#x77e9;&#x9635;H
+    <p>
+      &#35201;&#27714;&#28857;&#23545;&#22788;&#20110;&#21516;&#19968;&#24179;&#38754;&#19978;
+    </p>
+  </span>
+<ul><li>&#x901a;&#x8fc7;&#x89e3;&#x6790;&#x6cd5;&#x6216;&#x6570;&#x503c;&#x6cd5;&#x5206;&#x89e3;&#xff0c;&#x540c;&#x6837;&#x4f1a;&#x6709;&#x56db;&#x7ec4;&#x89e3;&#xff0c;&#x5e76;&#x4e14;&#x540c;&#x65f6;&#x80fd;&#x6c42;&#x51fa;&#x5e73;&#x9762;&#x7684;&#x6cd5;&#x5411;&#x91cf;</span>
+
+</li>
+<li>&#x662f;&#x5426;&#x6709;&#x5c3a;&#x5ea6;&#x95ee;&#x9898;&#xff1f;&#xff1f;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x540c;&#x5e38;&#x4f1a;&#x540c;&#x65f6;&#x6c42;&#x5355;&#x5e94;&#x548c;&#x57fa;&#x7840;&#x77e9;&#x9635;&#xff0c;&#x9009;&#x62e9;&#x91cd;&#x6295;&#x5f71;&#x8bef;&#x5dee;&#x6700;&#x5c0f;&#x7684;&#x89e3;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x5c3a;&#x5ea6;&#x4e0d;&#x786e;&#x5b9a;&#x6027;</span>
+<ul><li>&#x7531;&#x4e8e;t&#x957f;&#x5ea6;&#x7684;&#x5f52;&#x4e00;&#x5316;&#xff0c;&#x5355;&#x76ee;&#x89c6;&#x89c9;&#x5c3a;&#x5ea6;&#x5177;&#x6709;&#x4e0d;&#x786e;&#x5b9a;&#x6027;</span>
+
+</li>
+<li>&#x5728;&#x5f00;&#x59cb;&#x7684;&#x65f6;&#x5019;&#x5bf9;t&#x8fdb;&#x884c;&#x5f52;&#x4e00;&#x5316;&#x79f0;&#x4e3a;&#x521d;&#x59cb;&#x5316;</span>
+
+</li>
+<li>&#x521d;&#x59cb;&#x5316;&#x540e;&#x5c31;&#x53ef;&#x4ee5;&#x7528;3D&#x5230;2D&#x6765;&#x8ba1;&#x7b97;&#x8fd0;&#x52a8;&#x4e86;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x6709;Structure&#x548c;&#x56fe;&#x50cf;&#x5bf9;&#x5e94;&#x70b9;3D-2D</span>
+<ul><li>PnP</span>
+<ul><li>&#x76f4;&#x63a5;&#x7ebf;&#x6027;&#x53d8;&#x6362;DLT,&#x7531;&#x4e8e;t&#x6709;&#x5341;&#x4e8c;&#x7ef4;&#xff0c;&#x56e0;&#x6b64;&#x9700;&#x8981;6&#x5bf9;&#x5339;&#x914d;&#x70b9;</span>
+
+</li>
+<li>P3P</span>
+<ul><li>P3P&#x53ea;&#x5229;&#x7528;&#x4e86;3&#x4e2a;&#x70b9;&#x7684;&#x4fe1;&#x606f;&#xff0c;&#x96be;&#x4ee5;&#x5229;&#x7528;&#x66f4;&#x591a;&#x7684;&#x4fe1;&#x606f;</span>
+
+</li>
+<li>&#x82e5;&#x5339;&#x914d;&#x70b9;&#x53d7;&#x5230;&#x566a;&#x58f0;&#x5e72;&#x6270;&#xff0c;&#x5219;&#x7b97;&#x6cd5;&#x5931;&#x8d25;</span>
+
+</li>
+<li>&#x5229;&#x7528;P3P&#x6c42;&#x7684;&#x65b0;&#x76f8;&#x673a;&#x4e0b;&#x7684;&#x4e09;&#x4e2a;&#x70b9;&#x7684;3D&#x5750;&#x6807;&#xff0c;&#x7136;&#x540e;&#x7528;3D-3D&#x7684;&#x65b9;&#x6cd5;&#x89e3;&#x51b3;</span>
+
+</li>
+
+</ul>
+</li>
+<li>EPnP</span>
+
+</li>
+<li>UPnP</span>
+
+</li>
+<li>Bundle Adjustment</span>
+<ul><li>&#x5229;&#x7528;&#x91cd;&#x6295;&#x5f71;&#x8bef;&#x5dee;&#x8fdb;&#x884c;&#x6700;&#x5c0f;&#x4e8c;&#x4e58;&#x4f18;&#x5316;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x6709;&#x6df1;&#x5ea6;&#x6216;&#x53cc;&#x76ee;3D-3D</span>
+<ul><li>ICP</span>
+<ul><li>&#x5728;&#x6fc0;&#x5149;SLAM&#x65e0;&#x6cd5;&#x77e5;&#x9053;&#x5339;&#x914d;&#x5173;&#x7cfb;&#xff0c;&#x4f46;&#x662f;RGBD&#x4e2d;&#x7684;&#x7279;&#x5f81;&#x70b9;&#x4e3a;&#x6211;&#x4eec;&#x89e3;&#x51b3;&#x4e86;&#x8fd9;&#x4e2a;&#x95ee;&#x9898;</span>
+
+</li>
+<li>SVD&#x65b9;&#x6cd5;&#xff1a;&#x4e09;&#x6b65;&#x8d70;</span>
+<ul><li>&#x8ba1;&#x7b97;&#x53bb;&#x8d28;&#x5fc3;&#x5750;&#x6807;</span>
+
+</li>
+<li>&#x8ba1;&#x7b97;&#x65cb;&#x8f6c;&#x77e9;&#x9635;</span>
+
+</li>
+<li>&#x8ba1;&#x7b97;&#x4f4d;&#x79fb;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x975e;&#x7ebf;&#x6027;&#x4f18;&#x5316;&#x65b9;&#x6cd5;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x6c42;&#x89e3;&#x5730;&#x56fe;&#x70b9;&#x6df1;&#x5ea6;</span>
+<ul><li>&#x975e;RGBD
+    <p>
+      &#31435;&#20307;&#35270;&#35273;
+    </p>
+  </span>
+<ul><li>&#x5355;&#x76ee;</span>
+<ul><li>&#x4e09;&#x89d2;&#x5316;&#x6d4b;&#x91cf;Triangular</span>
+<ul><li>&#x589e;&#x52a0;&#x7cbe;&#x5ea6;&#x53ef;&#x4ee5;&#x901a;&#x8fc7;&#x589e;&#x52a0;&#x56fe;&#x7247;&#x5206;&#x8fa8;&#x7387;&#x6216;&#x589e;&#x5927;&#x4f4d;&#x79fb;</span>
+
+</li>
+<li>&#x4e09;&#x89d2;&#x6d4b;&#x91cf;&#x7684;&#x77db;&#x76fe;,t&#x8d8a;&#x5927;&#x51c6;&#x786e;&#x6027;&#x8d8a;&#x9ad8;&#x4f46;&#x8d8a;&#x5bb9;&#x6613;&#x4e22;&#x5931;</span>
+
+</li>
+<li>&#x6df1;&#x5ea6;&#x6ee4;&#x6ce2;&#x5668;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x53cc;&#x76ee;</span>
+<ul><li>&#x5de6;&#x53f3;&#x89c6;&#x5dee;&#x56fe;&#x8ba1;&#x7b97;</span>
+<ul><li>&#x6781;&#x7ebf;&#x641c;&#x7d22;</span>
+
+</li>
+<li>&#x5757;&#x5339;&#x914d;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x73b0;&#x5728;&#x7528;&#x5355;&#x76ee;&#x6216;&#x53cc;&#x76ee;&#x7684;&#x90fd;&#x6ca1;&#x6709;RGBD&#x76f8;&#x673a;&#x5feb;&#x548c;&#x51c6;&#x786e;</span>
+
+</li>
+<li>&#x4e0d;&#x786e;&#x5b9a;&#x6027;&#x8ba1;&#x7b97;</span>
+<ul><li>&#x6df1;&#x5ea6;&#x6ee4;&#x6ce2;&#x5668;</span>
+<ul><li>&#x9ad8;&#x65af;&#x6ee4;&#x6ce2;&#x5668;</span>
+
+</li>
+<li>&#x5747;&#x5300;-&#x6df7;&#x5408;&#x9ad8;&#x65af;&#x6ee4;&#x6ce2;&#x5668;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x9006;&#x6df1;&#x5ea6;
+    <p>
+      &#20223;&#30495;&#26102;&#21457;&#29616;&#28145;&#24230;&#30340;&#20498;&#25968;&#20026;&#39640;&#26031;&#20998;&#24067;&#20250;&#26377;&#26356;&#22909;&#30340;&#25928;&#26524;
+    </p>
+  </span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x5e76;&#x884c;&#x8ba1;&#x7b97;</span>
+<ul><li>&#x867d;&#x7136;&#x5728;&#x7a20;&#x5bc6;&#x8ba1;&#x7b97;&#x8fc7;&#x7a0b;&#x4e2d;&#xff0c;&#x50cf;&#x7d20;&#x70b9;&#x7684;&#x6570;&#x91cf;&#x5f88;&#x5927;&#xff0c;&#x4f46;&#x662f;&#x5f7c;&#x6b64;&#x4e4b;&#x95f4;&#x7684;&#x8ba1;&#x7b97;&#x4e92;&#x76f8;&#x4e0d;&#x5e72;&#x6270;&#xff0c;&#x56e0;&#x6b64;&#x53ef;&#x4ee5;&#x7528;GPU&#x52a0;&#x901f;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x5c3d;&#x7ba1;&#x53cc;&#x76ee;&#x548c;&#x79fb;&#x52a8;&#x5355;&#x76ee;&#x80fd;&#x591f;&#x5efa;&#x7acb;&#x7a20;&#x5bc6;&#x5730;&#x56fe;&#xff0c;&#x4f46;&#x662f;&#x6211;&#x4eec;&#x8ba4;&#x4e3a;&#x4ed6;&#x4eec;&#x8fc7;&#x4e8e;&#x4f9d;&#x8d56;&#x73af;&#x5883;&#x7eb9;&#x7406;&#x548c;&#x5149;&#x7167;&#xff0c;&#x4e0d;&#x591f;&#x53ef;&#x9760;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li><span id="show1_3" class="foldclosed" onClick="show_folder('1_3')" style="POSITION: absolute">+</span> <span id="hide1_3" class="foldopened" onClick="hide_folder('1_3')">-</span>
+Optimization</span>
+<ul id="fold1_3" style="POSITION: relative; VISIBILITY: visible;"><li>&#x7ebf;&#x6027;&#x4f18;&#x5316;</span>
+<ul><li>&#x5047;&#x8bbe;&#x8bef;&#x5dee;&#x7b26;&#x5408;&#x67d0;&#x6982;&#x7387;&#x5206;&#x5e03;</span>
+
+</li>
+<li>&#x5047;&#x8bbe;&#x9a6c;&#x5c14;&#x53ef;&#x592b;&#x6027;</span>
+
+</li>
+<li>&#x5361;&#x963f;&#x66fc;&#x65b9;&#x6cd5;</span>
+<ul><li>&#x5361;&#x963f;&#x66fc;&#x6ee4;&#x6ce2;:MAP</span>
+
+</li>
+<li>&#x62d3;&#x5c55;&#x5361;&#x963f;&#x66fc;&#x6ee4;&#x6ce2;
+    <p>
+      &#21033;&#29992;&#27888;&#21202;&#23637;&#24320;&#19968;&#38454;&#36817;&#20284;
+    </p>
+  </span>
+
+</li>
+<li>&#x65e0;&#x5473;&#x5361;&#x963f;&#x66fc;&#x6ee4;&#x6ce2;</span>
+
+</li>
+<li>&#x4e0d;&#x8db3;</span>
+<ul><li>&#x8981;&#x6c42;&#x9a6c;&#x5c14;&#x53ef;&#x592b;&#x6027;&#xff0c;&#x4e0d;&#x80fd;&#x8fdb;&#x884c;&#x95ed;&#x73af;&#x68c0;&#x6d4b;</span>
+
+</li>
+<li>&#x6cf0;&#x52d2;&#x5c55;&#x5f00;&#x53ea;&#x80fd;&#x5728;&#x5c40;&#x90e8;&#x7a7a;&#x95f4;&#x8fdb;&#x884c;</span>
+
+</li>
+<li>&#x8981;&#x5b58;&#x50a8;&#x534f;&#x65b9;&#x5dee;&#x77e9;&#x9635;&#xff0c;&#x7a7a;&#x95f4;&#x8981;&#x6c42;&#x6210;&#x5e73;&#x65b9;&#x589e;&#x957f;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x975e;&#x7ebf;&#x6027;&#x4f18;&#x5316;</span>
+<ul><li>Bundle Adjustment</span>
+
+</li>
+<li>Pose Graph
+    <p>
+      &#21482;&#20248;&#21270;&#20301;&#23039;
+    </p>
+  </span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x56e0;&#x5b50;&#x56fe;&#x4f18;&#x5316;</span>
+<ul><li>&#x8d1d;&#x53f6;&#x65af;&#x7f51;&#x7edc;</span>
+
+</li>
+<li>&#x56e0;&#x5b50;&#x56fe;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li><span id="show1_4" class="foldclosed" onClick="show_folder('1_4')" style="POSITION: absolute">+</span> <span id="hide1_4" class="foldopened" onClick="hide_folder('1_4')">-</span>
+Loop Closure</span>
+<ul id="fold1_4" style="POSITION: relative; VISIBILITY: visible;"><li>SLAM&#x5bf9;&#x51c6;&#x786e;&#x7387;&#x7684;&#x8981;&#x6c42;&#x8981;&#x9ad8;&#x4e8e;&#x5bf9;&#x53ec;&#x56de;&#x7387;&#x7684;&#x8981;&#x6c42;</span>
+
+</li>
+<li>&#x8bcd;&#x888b;&#x6a21;&#x578b;</span>
+<ul><li>&#x5b57;&#x5178;</span>
+<ul><li>K&#x53c9;&#x6811;</span>
+
+</li>
+<li>&#x76f8;&#x4f3c;&#x5ea6;&#x8ba1;&#x7b97;</span>
+<ul><li>TF-IDF</span>
+
+</li>
+<li>L1-Norm</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x5173;&#x952e;&#x5e27;&#x9009;&#x62e9;</span>
+
+</li>
+
+</ul>
+</li>
+<li><span id="show1_5" class="foldclosed" onClick="show_folder('1_5')" style="POSITION: absolute">+</span> <span id="hide1_5" class="foldopened" onClick="hide_folder('1_5')">-</span>
+Mapping</span>
+<ul id="fold1_5" style="POSITION: relative; VISIBILITY: visible;"><li><span id="show1_5_1" class="foldclosed" onClick="show_folder('1_5_1')" style="POSITION: absolute">+</span> <span id="hide1_5_1" class="foldopened" onClick="hide_folder('1_5_1')">-</span>
+Metric</span>
+<ul id="fold1_5_1" style="POSITION: relative; VISIBILITY: visible;"><li>Sparse</span>
+
+</li>
+<li>Dense</span>
+
+</li>
+<li>Semi-dense</span>
+
+</li>
+<li>2D-Grid</span>
+
+</li>
+<li>3D-Voxel</span>
+
+</li>
+
+</ul>
+</li>
+<li>Topologic</span>
+
+</li>
+<li>Semantic</span>
+
+</li>
+<li>&#x4f5c;&#x7528;</span>
+<ul><li>&#x5b9a;&#x4f4d;</span>
+
+</li>
+<li>&#x5bfc;&#x822a;</span>
+
+</li>
+<li>&#x907f;&#x969c;</span>
+
+</li>
+<li>&#x91cd;&#x5efa;</span>
+
+</li>
+<li>&#x4ea4;&#x4e92;</span>
+
+</li>
+
+</ul>
+</li>
+<li>RGBD</span>
+<ul><li>&#x70b9;&#x4e91;&#x5730;&#x56fe;</span>
+<ul><li>&#x201c;&#x57fa;&#x7840;&#x201c;&#x6216;&#x201d;&#x521d;&#x7ea7;&#x201c;&#x7684;&#x4e00;&#x79cd;&#x8868;&#x73b0;&#x5f62;&#x5f0f;&#xff0c;&#x5e76;&#x6ca1;&#x4ec0;&#x4e48;&#x5b9e;&#x9645;&#x610f;&#x4e49;&#xff0c;&#x53ea;&#x80fd;&#x65b9;&#x4fbf;&#x53ef;&#x89c6;&#x5316;</span>
+
+</li>
+<li>&#x7f3a;&#x9677;</span>
+<ul><li>&#x5360;&#x7528;&#x7a7a;&#x95f4;&#x89c4;&#x6a21;&#x5927;</span>
+
+</li>
+<li>&#x65e0;&#x6cd5;&#x5904;&#x7406;&#x52a8;&#x6001;&#x7269;&#x4f53;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x6d41;&#x7a0b;</span>
+<ul><li>&#x8003;&#x8651;&#x5230;Kinect&#x91cf;&#x7a0b;&#x95ee;&#x9898;&#xff0c;&#x53bb;&#x6389;&#x6df1;&#x5ea6;&#x503c;&#x592a;&#x5927;&#x6216;&#x8005;&#x65e0;&#x6548;&#x7684;&#x70b9;</span>
+
+</li>
+<li>&#x5229;&#x7528;&#x7edf;&#x8ba1;&#x6ee4;&#x6ce2;&#x5668;&#x65b9;&#x6cd5;&#x53bb;&#x6389;&#x5b64;&#x7acb;&#x7684;&#x70b9;&#xff0c;&#x6ee4;&#x6ce2;&#x5668;&#x7edf;&#x8ba1;&#x6bcf;&#x4e2a;&#x70b9;&#x4e0e;&#x5b83;&#x6700;&#x8fd1;&#x7684;N&#x4e2a;&#x70b9;&#x4e4b;&#x95f4;&#x7684;&#x8ddd;&#x79bb;&#xff0c;&#x53bb;&#x6389;&#x8ddd;&#x79bb;&#x5747;&#x503c;&#x8fc7;&#x5927;&#x7684;&#x70b9;</span>
+
+</li>
+<li>&#x5229;&#x7528;&#x4f53;&#x7d20;&#x6ee4;&#x6ce2;&#x5668;&#x8fdb;&#x884c;&#x964d;&#x91c7;&#x6837;&#xff0c;&#x4f7f;&#x5f97;&#x67d0;&#x4e2a;&#x4e00;&#x5b9a;&#x5927;&#x5c0f;&#x7684;&#x7acb;&#x65b9;&#x4f53;&#x5185;&#x4ec5;&#x6709;&#x4e00;&#x4e2a;&#x70b9;&#xff0c;&#x51cf;&#x5c11;&#x5b58;&#x50a8;&#x7a7a;&#x95f4;&#x7684;&#x5360;&#x7528;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x8fdb;&#x4e00;&#x6b65;</span>
+<ul><li>&#x4e09;&#x89d2;&#x7f51;&#x683c;(Mesh)</span>
+<ul><li>&#x6cca;&#x677e;&#x91cd;&#x5efa;</span>
+
+</li>
+
+</ul>
+</li>
+<li>&#x9762;&#x7247;(Surfel)</span>
+
+</li>
+<li>&#x4f53;&#x7d20;(Voxel)</span>
+<ul><li>&#x5360;&#x636e;&#x7f51;&#x683c;&#x5730;&#x56fe;(Occupancy Map)</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li>&#x516b;&#x53c9;&#x6811;&#x5730;&#x56fe;</span>
+<ul><li>&#x5c06;&#x7a7a;&#x95f4;&#x4e0d;&#x65ad;8&#x7b49;&#x5206;&#x5f62;&#x6210;&#x4e00;&#x68f5;&#x6811;&#xff0c;&#x6bcf;&#x4e2a;&#x53f6;&#x5b50;&#x8282;&#x70b9;&#x8868;&#x793a;&#x4e00;&#x4e2a;Voxel&#xff0c;&#x5176;&#x4e2d;&#x53f6;&#x5b50;&#x8282;&#x70b9;&#x7684;&#x53d6;&#x503c;&#x4e3a;0&#x6216;1&#x6216;&#x66f4;&#x8fdb;&#x4e00;&#x6b65;&#x7684;&#x7528;&#x6982;&#x7387;&#x6765;&#x8868;&#x793a;&#x8be5;Voxel&#x662f;&#x5426;&#x5df2;&#x88ab;&#x5360;&#x636e;</span>
+
+</li>
+<li>&#x516b;&#x53c9;&#x6811;&#x7701;&#x7a7a;&#x95f4;&#x4f53;&#x73b0;&#x5728;&#x5b83;&#x53ef;&#x4ee5;&#x5c55;&#x5f00;&#x4f1a;&#x88ab;&#x66f4;&#x65b0;&#x7684;&#x90a3;&#x90e8;&#x5206;&#x8282;&#x70b9;</span>
+
+</li>
+
+</ul>
+</li>
+<li>TSDF</span>
+<ul><li>&#x5982;&#x679c;&#x5c0f;&#x5757;&#x5728;&#x6700;&#x8fd1;&#x7269;&#x4f53;&#x524d;&#x65b9;&#x53d6;&#x6b63;&#x503c;&#x5426;&#x5219;&#x53d6;&#x76f8;&#x53cd;&#x6570;&#xff0c;&#x592a;&#x8fdc;&#x53d6;&#x6b63;&#x8d1f;1</span>
+
+</li>
+<li>TSDF&#x662f;&#x4ee5;&#x5efa;&#x56fe;&#x4e3a;&#x4e3b;&#x4f53;&#x7684;</span>
+
+</li>
+<li>&#x5229;&#x7528;ICP&#xff0c;&#x4e0d;&#x7528;&#x5f69;&#x8272;&#x4fe1;&#x606f;&#xff0c;&#x53ea;&#x8981;&#x6df1;&#x5ea6;&#x4fe1;&#x606f;&#x4fbf;&#x5b8c;&#x6210;&#x4f4d;&#x59ff;&#x4f30;&#x8ba1;&#xff0c;&#x65e0;&#x9700;&#x7279;&#x5f81;&#x70b9;&#x65b9;&#x6cd5;</span>
+
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+
+</ul><SCRIPT type="text/javascript">
+fold_document();
+</SCRIPT>
+</body>
+</html>

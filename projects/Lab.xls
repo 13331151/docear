@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?mso-application 
+			progid="Excel.Sheet"
+		?><Workbook xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="urn:schemas-microsoft-com:office:spreadsheet">
+<Styles>
+<Style ss:ID="s16" ss:Name="attribute_cell">
+<Borders>
+<Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+<Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+<Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+<Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+</Borders>
+</Style>
+<Style ss:ID="s17" ss:Name="attribute_header">
+<Borders>
+<Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+<Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+<Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+<Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+</Borders>
+<Font ss:Bold="1"/>
+</Style>
+</Styles>
+<Worksheet ss:Name="Freeplane Sheet">
+<Table>
+<Row>
+<Cell ss:Index="1">
+<Data ss:Type="String">Lab</Data>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">The Robotics Institute</Data>
+<Comment>
+<ss:Data>
+<p>
+      CMU
+    </p>
+</ss:Data>
+</Comment>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="3">
+<Data ss:Type="String">Research Interests</Data>
+<Comment>
+<ss:Data>
+<p>
+      http://www.ri.cmu.edu/research_keyword.html?menu_id=260
+    </p>
+</ss:Data>
+</Comment>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">Autonomous System Lab(ASL)</Data>
+<Comment>
+<ss:Data>
+<p>
+      ETH Zurich(瑞士苏黎世)
+    </p>
+</ss:Data>
+</Comment>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="3">
+<Data ss:Type="String">Research Interest</Data>
+<Comment>
+<ss:Data>
+<p>
+      http://www.asl.ethz.ch/research.html
+    </p>
+</ss:Data>
+</Comment>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">Multiple Autonomous Robotics System(MARS)</Data>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="3">
+<Data ss:Type="String">Research Interest</Data>
+<Comment>
+<ss:Data>
+<p>
+      http://mars.cs.umn.edu/research.php#research_highlights
+    </p>
+</ss:Data>
+</Comment>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">UW Robotics and State Estimation Lab</Data>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">The Computer Vision Group</Data>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">Vijay Kumar Lab(GRASP Lab)</Data>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">Robotics and Perception Group(RPG)</Data>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">Kevin(kai) Xu's</Data>
+<Comment>
+<ss:Data>
+<p>
+      国防科大
+    </p>
+</ss:Data>
+</Comment>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">Perceptional Robotics Lab</Data>
+<Comment>
+<ss:Data>
+<p>
+      Korean
+    </p>
+</ss:Data>
+</Comment>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">Humanoid Robotics Laboratory</Data>
+<Comment>
+<ss:Data>
+<p>
+      Uni. of Freiburg(德国)
+    </p>
+</ss:Data>
+</Comment>
+</Cell>
+</Row>
+<Row>
+<Cell ss:Index="2">
+<Data ss:Type="String">Shen Shaojie</Data>
+<Comment>
+<ss:Data>
+<p>
+      HKUST(港科大)
+    </p>
+</ss:Data>
+</Comment>
+</Cell>
+</Row>
+</Table>
+</Worksheet>
+</Workbook>

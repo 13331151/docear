@@ -1,0 +1,12 @@
+<project name="SLAM" ID="158E8737F1C6T1VMLXM7I625KLIXV49S6UMT" version="docear 1.0">
+<folder type="library" name="Library">
+<link type="literature_annotations" name="Literature &amp; Annotations" path="project://158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/_data/158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/default_files/literature_and_annotations.mm"/>
+<link type="file" name="Temp" path="project://158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/_data/158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/default_files/temp.mm" system="true"/>
+<link type="file" name="Trash" path="project://158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/_data/158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/default_files/trash.mm" system="true"/>
+</folder>
+<folder type="physical" name="My drafts" path="project://158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/_data/158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/My%20Drafts/"/>
+<folder type="literature_repository" name="Literature repository" system="true">
+<folder type="repository_path" name="default" path="file:/home/liemzuvon/Docear/projects/SLAM/literature_repository"/>
+</folder>
+<link type="references" name="References" path="project://158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/_data/158E8737F1C6T1VMLXM7I625KLIXV49S6UMT/default_files/SLAM.bib" system="true"/>
+</project>
